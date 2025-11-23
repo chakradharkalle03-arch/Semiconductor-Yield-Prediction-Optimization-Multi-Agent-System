@@ -4,6 +4,29 @@
 
 This manual will walk you through every feature of the Semiconductor Yield Prediction & Optimization System. Whether you're a process engineer looking to optimize your fab line or a data scientist exploring yield patterns, this guide has you covered.
 
+## AI Models Used
+
+The system leverages advanced AI models for intelligent analysis:
+
+**Primary Model: Mistral-7B-Instruct**
+- A 7-billion parameter language model accessed via HuggingFace Inference API
+- Used by the Prediction Agent for sophisticated yield forecasting
+- Understands complex relationships between process parameters and yield outcomes
+- Provides nuanced analysis beyond simple statistical patterns
+
+**Fallback: Rule-Based Algorithm**
+- Sophisticated heuristic-based prediction system
+- Automatically used when API key is not configured or API is unavailable
+- Ensures the system always works, regardless of API availability
+- Uses domain knowledge encoded in the system
+
+**Optimization: Grid Search Algorithm**
+- Systematic exploration of parameter space
+- Tests combinations of temperature, etch time, and exposure dose
+- Selects optimal parameters based on predicted yield
+
+*For detailed model documentation, see [MODELS_USED.md](MODELS_USED.md)*
+
 ## Understanding the Interface
 
 When you first open the system, you'll see a clean 3-column layout:

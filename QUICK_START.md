@@ -26,14 +26,14 @@ This isn't just another machine learning project. We're using some seriously adv
 
 **Multi-Agent Architecture** - Instead of one monolithic model trying to do everything, we have specialized agents:
 - A Data Agent that understands wafer maps and metrology data
-- A Prediction Agent that forecasts yield using advanced models
-- An Optimization Agent that searches for the best parameters
+- A Prediction Agent that forecasts yield using **Mistral-7B-Instruct LLM** (or rule-based fallback)
+- An Optimization Agent that uses **grid search algorithms** to find the best parameters
 - A Recommendation Agent that translates findings into actionable steps
 - A Report Agent that generates professional documentation
 
-Each agent is an expert in its field, and they collaborate to give you comprehensive insights.
+Each agent is an expert in its field, and they collaborate to give you comprehensive insights. The Prediction Agent uses advanced AI when available, but always has a reliable fallback, so the system works whether you have an API key or not.
 
-**HuggingFace Integration** - We leverage state-of-the-art language models for intelligent analysis. When available, the system uses these models for nuanced understanding of your process data. When not available, it gracefully falls back to rule-based systems that are still highly effective.
+**HuggingFace Integration** - We leverage state-of-the-art language models for intelligent analysis. The system uses **Mistral-7B-Instruct** (7 billion parameters) via HuggingFace Inference API for advanced yield prediction. This model understands complex relationships between process parameters and yield outcomes. When the API isn't available, the system gracefully falls back to sophisticated rule-based algorithms that are still highly effective.
 
 **Modern Web Architecture** - FastAPI backend for lightning-fast responses, Node.js frontend for smooth user experience, and a clean 3-column interface that puts everything you need right in front of you.
 

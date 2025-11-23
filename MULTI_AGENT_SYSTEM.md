@@ -32,35 +32,58 @@ The Supervisor uses **LangGraph** to orchestrate the workflow. LangGraph lets us
 
 **What it does:** This is where the magic happens. The Prediction Agent takes processed data and predicts what your yield will be.
 
+**Primary Model: Mistral-7B-Instruct**
+- **Model**: `mistralai/Mistral-7B-Instruct-v0.1` (7 billion parameters)
+- **Provider**: HuggingFace Inference API
+- **Type**: Large Language Model (LLM)
+- **Capabilities**: Understands complex relationships between process parameters, wafer characteristics, and yield outcomes
+- **Configuration**: Temperature 0.3 (for consistent predictions), max 512 tokens
+
 **How it works:**
-- Uses either a HuggingFace language model (when available) or rule-based algorithms
+- Uses **Mistral-7B-Instruct LLM** via HuggingFace when API key is available
+- Falls back to **sophisticated rule-based algorithms** when API is unavailable
 - Considers process parameters, wafer characteristics, and historical patterns
 - Generates a yield prediction with a confidence level
 - Identifies key factors affecting yield
 
 **The Intelligence:**
-When using the LLM, the agent doesn't just crunch numbers - it understands context. It can reason about relationships between parameters, consider edge cases, and provide nuanced predictions. When the LLM isn't available, sophisticated rule-based algorithms take over, using domain knowledge encoded in the system.
+When using the LLM, the agent doesn't just crunch numbers - it understands context. It can reason about relationships between parameters, consider edge cases, and provide nuanced predictions. The model receives structured prompts with system instructions and actual data, allowing it to provide intelligent analysis beyond simple statistical patterns.
 
-**Why it matters:** Accurate predictions are the foundation of optimization. If you don't know where you are, you can't figure out where to go.
+When the LLM isn't available, sophisticated rule-based algorithms take over, using domain knowledge encoded in the system. These algorithms consider:
+- Quality scores from data processing
+- Parameter deviations from optimal ranges
+- EDA error counts
+- Defect density measurements
 
-**Real-world analogy:** Like a weather forecaster who doesn't just look at today's temperature, but considers pressure systems, wind patterns, and historical data to predict tomorrow's weather.
+**Why it matters:** Accurate predictions are the foundation of optimization. If you don't know where you are, you can't figure out where to go. The dual-model approach ensures the system always works, whether you have API access or not.
+
+**Real-world analogy:** Like a weather forecaster who doesn't just look at today's temperature, but considers pressure systems, wind patterns, and historical data to predict tomorrow's weather - but with the added benefit of always having a backup method that works even when the primary system is unavailable.
 
 ### 3. Optimization Agent - The Parameter Explorer
 
 **What it does:** This agent is your optimization specialist. It searches through the parameter space to find the best settings.
 
+**Algorithm: Grid Search with Heuristic Evaluation**
+- **Method**: Systematic grid search through parameter space
+- **Parameter Ranges**:
+  - Temperature: 195-205°C (0.5°C increments)
+  - Etch Time: 40-50s (0.2s increments)
+  - Exposure Dose: 45-55 mJ/cm² (0.3 mJ/cm² increments)
+- **Evaluation**: Uses the same yield prediction logic (LLM or rule-based) to evaluate each combination
+
 **How it works:**
 - Takes the current yield prediction as a baseline
-- Systematically explores different parameter combinations
-- Uses optimization algorithms to find improvements
-- Balances multiple objectives (yield, process stability, etc.)
+- Systematically explores different parameter combinations using grid search
+- Evaluates each combination using the Prediction Agent's model
+- Selects parameters with highest predicted yield
+- Calculates potential improvement percentage
 
 **The Search Strategy:**
-The agent doesn't just try random combinations - it uses intelligent search. It understands which parameters have the most impact, explores promising regions more thoroughly, and avoids parameter combinations that are known to be problematic.
+The agent doesn't just try random combinations - it uses systematic grid search. It tests all combinations within defined ranges, evaluates each using the same prediction model that analyzed the current state, and selects the optimal combination. This ensures consistency - the same model that predicts current yield also evaluates optimization candidates.
 
-**Why it matters:** Finding the optimal parameters manually would take days or weeks of experimentation. The Optimization Agent does it in seconds, exploring thousands of combinations to find the best ones.
+**Why it matters:** Finding the optimal parameters manually would take days or weeks of experimentation. The Optimization Agent does it in seconds, exploring thousands of combinations to find the best ones. The grid search approach is exhaustive within the defined ranges, ensuring no promising combination is missed.
 
-**Real-world analogy:** Like a process engineer who has run thousands of experiments and learned which parameter tweaks give the best results, but can test all possibilities instantly.
+**Real-world analogy:** Like a process engineer who has run thousands of experiments and learned which parameter tweaks give the best results, but can test all possibilities instantly using the same prediction model that analyzed the current state.
 
 ### 4. Recommendation Agent - The Action Planner
 
@@ -148,7 +171,7 @@ Here's the workflow in action:
 
 **LangGraph:** Orchestrates the workflow. It defines how agents connect, how data flows between them, and ensures everything happens in the right order. It's like a conductor's score, but for AI agents.
 
-**HuggingFace:** When available, provides state-of-the-art language models for intelligent analysis. The Prediction Agent can leverage these models for nuanced understanding of process relationships.
+**HuggingFace:** Provides access to **Mistral-7B-Instruct** (7B parameters) via Inference API. The Prediction Agent leverages this advanced language model for intelligent yield prediction and analysis. The system gracefully falls back to rule-based algorithms when the API is unavailable, ensuring reliability.
 
 **FastAPI:** Powers the backend, providing fast, reliable API endpoints that the agents use to communicate and the frontend uses to interact with the system.
 
@@ -170,9 +193,25 @@ Here's what makes this system special: it's not just AI doing AI things. It's AI
 
 But they do it faster, more consistently, and at scale. They don't get tired, they don't forget, and they can analyze thousands of parameter combinations in the time it takes a human to analyze one.
 
+## Models & Algorithms Summary
+
+| Component | Model/Algorithm | Details |
+|-----------|----------------|---------|
+| **Prediction Agent** | Mistral-7B-Instruct | 7B parameter LLM via HuggingFace API |
+| **Prediction (Fallback)** | Rule-based algorithm | Heuristic-based with domain knowledge |
+| **Optimization Agent** | Grid search | Systematic parameter space exploration |
+| **Recommendation Agent** | Rule-based logic | Translates findings to actionable steps |
+| **Data Agent** | Statistical methods | Mean, std, quality scoring |
+
+*For comprehensive model documentation, see [MODELS_USED.md](MODELS_USED.md)*
+
 ## Looking Forward
 
-This architecture is designed to evolve. Want to add a new agent that analyzes cost implications? Easy. Want to integrate with your MES system? The agents can be extended. Want to add machine learning models trained on your specific fab data? The Prediction Agent can be enhanced.
+This architecture is designed to evolve. Want to add a new agent that analyzes cost implications? Easy. Want to integrate with your MES system? The agents can be extended. Want to add machine learning models trained on your specific fab data? The Prediction Agent can be enhanced. The model infrastructure supports:
+- Fine-tuning on domain-specific data
+- Ensemble methods combining multiple models
+- Local model deployment for privacy-sensitive environments
+- Custom model integration
 
 The multi-agent approach isn't just a design choice - it's a philosophy. We believe that complex problems are best solved by specialized experts working together. And that's exactly what you get with this system.
 

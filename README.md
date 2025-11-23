@@ -46,13 +46,31 @@ The system uses a **Multi-Agent Architecture** with five specialized agents:
 
 The **Supervisor Agent** (using LangGraph) orchestrates all agents, ensuring they work in the correct order and synthesize their outputs into comprehensive results.
 
+## 🤖 AI Models & Algorithms
+
+**Primary Model:**
+- **Mistral-7B-Instruct** (`mistralai/Mistral-7B-Instruct-v0.1`) - Advanced 7B parameter language model via HuggingFace Inference API for intelligent yield prediction and analysis
+
+**Fallback System:**
+- **Rule-Based Algorithm** - Sophisticated heuristic-based prediction that works without API dependencies, ensuring the system is always functional
+
+**Optimization:**
+- **Grid Search Algorithm** - Systematic parameter space exploration to find optimal temperature, etch time, and exposure dose settings
+
+**Other Components:**
+- Statistical analysis for data processing
+- Rule-based logic for recommendations
+- Heuristic evaluation for optimization
+
+*See [MODELS_USED.md](MODELS_USED.md) for detailed model documentation.*
+
 ## 🛠️ Tech Stack
 
 **Backend:**
 - FastAPI - High-performance Python web framework
 - LangChain - Agent framework for intelligent reasoning
 - LangGraph - Workflow orchestration for multi-agent systems
-- HuggingFace - State-of-the-art language models
+- HuggingFace - State-of-the-art language models (Mistral-7B-Instruct)
 - ReportLab - PDF generation
 - Pandas, NumPy - Data processing
 
@@ -122,6 +140,7 @@ Navigate to `http://localhost:3008`
 - **[Quick Start Guide](QUICK_START.md)** - Get up and running quickly
 - **[User Manual](USER_MANUAL.md)** - Complete usage instructions
 - **[Multi-Agent System Explanation](MULTI_AGENT_SYSTEM.md)** - Technical architecture details
+- **[Models Used](MODELS_USED.md)** - Detailed documentation of AI models and algorithms
 
 ## 🎯 Usage
 
