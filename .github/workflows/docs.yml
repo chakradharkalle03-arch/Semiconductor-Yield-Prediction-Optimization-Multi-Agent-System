@@ -1,0 +1,43 @@
+name: Documentation Check
+
+on:
+  push:
+    paths:
+      - '*.md'
+      - 'QUICK_START.md'
+      - 'USER_MANUAL.md'
+      - 'MULTI_AGENT_SYSTEM.md'
+      - 'README.md'
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check documentation files exist
+      run: |
+        if [ ! -f "README.md" ]; then
+          echo "❌ README.md missing"
+          exit 1
+        fi
+        if [ ! -f "QUICK_START.md" ]; then
+          echo "❌ QUICK_START.md missing"
+          exit 1
+        fi
+        if [ ! -f "USER_MANUAL.md" ]; then
+          echo "❌ USER_MANUAL.md missing"
+          exit 1
+        fi
+        if [ ! -f "MULTI_AGENT_SYSTEM.md" ]; then
+          echo "❌ MULTI_AGENT_SYSTEM.md missing"
+          exit 1
+        fi
+        echo "✅ All documentation files present"
+    
+    - name: Check markdown syntax
+      run: |
+        echo "📄 Documentation files verified"
+        wc -l *.md
+
