@@ -1,0 +1,16 @@
+{
+  "datasets": [
+    {
+      "id": "Photonic_Yield_20251123_160354",
+      "name": "Photonic Yield",
+      "file_path": "data\\datasets\\Photonic_Yield_20251123_160354.json",
+      "rows": 200,
+      "columns": [
+        "yield_query",
+        "yield_reasoning_response"
+      ],
+      "uploaded_at": "2025-11-23T16:03:54.525667",
+      "source": "local_upload"
+    }
+  ]
+}

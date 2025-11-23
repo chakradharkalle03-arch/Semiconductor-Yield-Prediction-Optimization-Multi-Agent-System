@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semiconductor Yield Prediction & Optimization</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>🔬 Semiconductor Yield Prediction & Optimization</h1>
+            <p>Multi-Agent System for Yield Analysis</p>
+        </header>
+
+        <div class="container">
+            <div class="main-content three-columns">
+                <!-- Column 1: Upload Dataset -->
+                <div class="card upload-section">
+                    <h2 class="card-title">📤 Upload Dataset</h2>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">Upload Local Dataset</h3>
+                        <p style="color: #718096; font-size: 14px; margin-bottom: 15px;">
+                            Upload your dataset file (JSON or CSV) from the testdata folder or any local location.
+                        </p>
+                        <div class="input-group">
+                            <label>Dataset Name (Optional - auto-detected from filename)</label>
+                            <input type="text" id="uploadDatasetName" placeholder="Leave empty to use filename">
+                        </div>
+                        <div class="input-group">
+                            <label>Select File (JSON or CSV only)</label>
+                            <input type="file" id="datasetFile" accept=".json,.csv" style="padding: 8px;">
+                            <small style="color: #718096; font-size: 12px; margin-top: 5px; display: block;">
+                                ⚠️ Note: Only JSON and CSV files are accepted. PDF files are output reports, not input datasets.
+                            </small>
+                        </div>
+                        <button id="uploadDatasetBtn" class="refresh-btn" style="width: 100%; margin-top: 10px;">
+                            📤 Upload Dataset
+                        </button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Available Datasets</h3>
+                        <div id="datasetsList" class="datasets-list">
+                            <p style="color: #718096; font-style: italic;">Loading datasets...</p>
+                        </div>
+                        <button id="refreshDatasetsBtn" class="refresh-btn" style="width: 100%; margin-top: 10px;">
+                            🔄 Refresh List
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Column 2: Yield Analysis Form -->
+                <div class="card yield-analysis">
+                    <h2 class="card-title">📊 Yield Analysis & Optimization</h2>
+                    
+                    <div class="form-section" style="margin-bottom: 20px;">
+                        <h3 class="section-title">Select Dataset</h3>
+                        <div class="input-group">
+                            <label>Choose Uploaded Dataset</label>
+                            <select id="datasetSelect" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">
+                                <option value="">-- Select a dataset to analyze --</option>
+                            </select>
+                            <small style="color: #718096; font-size: 12px; margin-top: 5px; display: block;">
+                                💡 Upload a dataset first, then select it here to analyze
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Process Parameters</h3>
+                        <div class="grid-2">
+                            <div class="input-group">
+                                <label>Temperature (°C)</label>
+                                <input type="number" id="temperature" value="198.5" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Etch Time (s)</label>
+                                <input type="number" id="etchTime" value="46.2" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Exposure Dose (mJ/cm²)</label>
+                                <input type="number" id="exposureDose" value="51.5" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Wafer Data</h3>
+                        <div class="grid-2">
+                            <div class="input-group">
+                                <label>Wafer ID</label>
+                                <input type="text" id="waferId" value="WAFER_001">
+                            </div>
+                            <div class="input-group">
+                                <label>Total Dies</label>
+                                <input type="number" id="totalDies" value="500">
+                            </div>
+                            <div class="input-group">
+                                <label>Good Dies</label>
+                                <input type="number" id="goodDies" value="465">
+                            </div>
+                            <div class="input-group">
+                                <label>Defect Density</label>
+                                <input type="number" id="defectDensity" value="0.07" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Metrology Data</h3>
+                        <div class="grid-2">
+                            <div class="input-group">
+                                <label>Thickness Mean (μm)</label>
+                                <input type="number" id="thicknessMean" value="1.2" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>Thickness Std (μm)</label>
+                                <input type="number" id="thicknessStd" value="0.05" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>CD Target (μm)</label>
+                                <input type="number" id="cdTarget" value="0.1" step="0.001">
+                            </div>
+                            <div class="input-group">
+                                <label>CD Actual (μm)</label>
+                                <input type="number" id="cdActual" value="0.102" step="0.001">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="analyzeBtn" class="analyze-btn">
+                        <span id="analyzeText">🚀 Analyze Yield</span>
+                        <span id="analyzeLoading" class="loading" style="display: none;">⏳ Analyzing...</span>
+                    </button>
+                </div>
+
+                <!-- Column 3: Prediction Results -->
+                <div id="resultsSection" class="card results-section">
+                    <h2 class="card-title">📈 Prediction Results</h2>
+                    
+                    <div id="resultsPlaceholder" style="text-align: center; padding: 40px; color: #718096;">
+                        <p style="font-size: 16px; margin-bottom: 10px;">📊</p>
+                        <p>Run analysis to see results here</p>
+                    </div>
+                    
+                    <div id="resultsContent" style="display: none;">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-label">Predicted Yield</div>
+                                <div class="metric-value" id="predictedYield">0.00%</div>
+                                <div class="metric-confidence">
+                                    Confidence: <span id="confidence">0%</span>
+                                </div>
+                            </div>
+                            <div class="metric-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <div class="metric-label">Optimized Yield</div>
+                                <div class="metric-value" id="optimizedYield">0.00%</div>
+                                <div class="metric-confidence">
+                                    Improvement: <span id="improvement">+0.00%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <h3 class="chart-title">Yield Comparison</h3>
+                            <canvas id="yieldChart"></canvas>
+                        </div>
+
+                        <div class="parameter-details" style="margin-top: 20px;">
+                            <h3 class="section-title">⚙️ Optimized Parameters</h3>
+                            <div class="parameter-item">
+                                <span class="param-label">Temperature:</span>
+                                <span class="param-value" id="optTemperature">0.00°C</span>
+                            </div>
+                            <div class="parameter-item">
+                                <span class="param-label">Etch Time:</span>
+                                <span class="param-value" id="optEtchTime">0.00s</span>
+                            </div>
+                            <div class="parameter-item">
+                                <span class="param-label">Exposure Dose:</span>
+                                <span class="param-value" id="optExposureDose">0.00 mJ/cm²</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h3 class="section-title">💡 Recommendations</h3>
+                            <div id="recommendationsList" class="recommendations-list"></div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <button id="downloadPdfBtn" class="analyze-btn" style="width: 100%; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                                📥 Download PDF Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
